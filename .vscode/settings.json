@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": ".venv\\Scripts\\python.exe",
+    "python.analysis.typeCheckingMode": "off",
+    "python.linting.pylintArgs": [
+        "--load-plugins",
+        "pylint_flask_sqlalchemy",
+    ],
+}

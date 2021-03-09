@@ -1,3 +1,5 @@
+from datetime import date as date_obj
+
 from flask_login import UserMixin
 from sqlalchemy import event
 
@@ -72,3 +74,12 @@ class Bill(db.Model):
             f'<Bill(date="{self.date}", descr="{self.descr}", '
             f'value="{self.value}", username="{self.username}", '
             f'category_id={self.category_id})>')
+
+    @classmethod
+    def from_name(cls, date: date_obj, descr: str, value: float,
+                  username: str, category_name: str):
+        """Create new Bill by category_name, rather than category_id"""
+        category = db.session.query(Category).filter_by(    # pylint:disable=no-member
+            username=username, name=category_name).one()
+        return cls(date=date, descr=descr, value=value,
+                   username=username, category_id=category.id)

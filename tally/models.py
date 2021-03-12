@@ -2,16 +2,17 @@ from datetime import date as date_obj
 
 from flask_login import UserMixin
 from sqlalchemy import event
+from sqlalchemy.engine import Engine
 
 from . import db, login_manager
 
 
-def _fk_pragma_on_connect(dbapi_con, con_record):  # pylint: disable=unused-argument
-    """Enable foreign key enforcement for SQLite3"""
-    dbapi_con.execute('pragma foreign_keys=ON')
-
-
-event.listen(db.engine, 'connect', _fk_pragma_on_connect)
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    """Enable foreign key constraints (required for SQLite3)."""
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 
 @login_manager.user_loader

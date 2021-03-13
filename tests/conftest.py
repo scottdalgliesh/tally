@@ -3,7 +3,8 @@
 from datetime import date
 
 import pytest
-from tally import create_app, db
+
+from tally import create_app, db as _db
 from tally.config import TestConfig
 from tally.models import Bill, Category, User
 
@@ -14,17 +15,7 @@ def app():
     return app
 
 
-@pytest.fixture
-def clear_test_db(app):
-    """Reset database & session state before/after tests."""
-    db.drop_all()
-    db.session.close()
-    db.create_all()
-    yield db.session.rollback()
-
-
-@pytest.fixture
-def sample_db(clear_test_db):
+def populate_test_db(db):
     """Populate test database with sample data."""
     users = [
         User(username='scott', password='123'),
@@ -58,3 +49,26 @@ def sample_db(clear_test_db):
     ]
     db.session.add_all(bills)
     db.session.commit()
+
+
+@pytest.fixture(scope='session')
+def db(app):
+    _db.app = app
+    _db.create_all()
+    populate_test_db(_db)
+    yield _db
+    _db.drop_all()
+
+
+@pytest.fixture(scope='function')
+def session(db):
+    connection = db.engine.connect()
+    transaction = connection.begin()
+    options = {'bind': connection, 'binds': {}}
+    session = db.create_scoped_session(options=options)
+    db.session = session
+    yield session
+
+    transaction.rollback()
+    connection.close()
+    session.remove()

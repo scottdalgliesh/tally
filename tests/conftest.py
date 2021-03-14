@@ -3,14 +3,27 @@
 from datetime import date
 
 import pytest
-
-from tally import create_app, db as _db
-from tally.config import TestConfig
+from tally import create_app
+from tally import db as _db
+from tally.config import Config
 from tally.models import Bill, Category, User
 
 
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = None
+    TESTING = True
+
+
 @pytest.fixture(scope='session')
-def app():
+def app(tmp_path_factory, worker_id):
+    """Instantiate app instance for testing."""
+    # create worker-bound temp directory to facilitate use of pytest-xdist
+    tmp_path = tmp_path_factory.getbasetemp() / worker_id
+    tmp_db = tmp_path / 'test.db'
+    tmp_path.mkdir()
+
+    # instantiate app
+    TestConfig.SQLALCHEMY_DATABASE_URI = f'sqlite:///{tmp_db}'
     app = create_app(TestConfig)
     return app
 
@@ -53,6 +66,7 @@ def populate_test_db(db):
 
 @pytest.fixture(scope='session')
 def db(app):
+    """Create & populate test database."""
     _db.app = app
     _db.create_all()
     populate_test_db(_db)
@@ -62,6 +76,7 @@ def db(app):
 
 @pytest.fixture(scope='function')
 def session(db):
+    """Configure test database for transactional testing."""
     connection = db.engine.connect()
     transaction = connection.begin()
     options = {'bind': connection, 'binds': {}}

@@ -6,7 +6,8 @@ import pytest
 from tally import create_app
 from tally import db as _db
 from tally.config import Config
-from tally.models import Bill, Category, User
+from tally.auth.models import User
+from tally.tally.models import Bill, Category
 
 
 class TestConfig(Config):

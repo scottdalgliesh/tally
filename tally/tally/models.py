@@ -1,36 +1,6 @@
 from datetime import date as date_obj
 
-from flask_login import UserMixin
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
-
-from . import db, login_manager
-
-
-@event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    """Enable foreign key constraints (required for SQLite3)."""
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
-class User(db.Model, UserMixin):
-    __tablename__ = 'users'
-    username = db.Column(db.String(30), primary_key=True)
-    password = db.Column(db.String(60), nullable=False)
-    categories = db.relationship('Category', back_populates='user',
-                                 cascade='all, delete-orphan')
-    bills = db.relationship('Bill', back_populates='user',
-                            cascade='all, delete-orphan')
-
-    def __repr__(self):
-        return f'<User(username="{self.username}")>'
+from .. import db
 
 
 class Category(db.Model):

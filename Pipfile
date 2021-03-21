@@ -11,6 +11,7 @@ flask-migrate = "*"
 flask-sqlalchemy = "*"
 flask-wtf = "*"
 wtforms = { extras = ["email"], version = "*" }
+wtforms-alchemy = "*"
 
 [dev-packages]
 pylint = "*"

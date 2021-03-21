@@ -10,24 +10,31 @@ db = SQLAlchemy()
 migrate = Migrate()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'info'
 
 
-def create_app(test_config=None):
+def create_app(config=Config):
+    '''App factory.'''
     app = Flask(__name__)
-    if test_config:
-        app.config.from_object(test_config)
-    else:
-        app.config.from_object(Config)
+    app.config.from_object(config)
+
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = 'login'
-    login_manager.login_message_category = 'info'
+
+    from . import auth  # nopep8
+    app.register_blueprint(auth.bp)
+
+    from . import tally  # nopep8
+    app.register_blueprint(tally.bp)
 
     @app.shell_context_processor
-    def make_shell_context():  # pylint:disable=unused-variable
-        from .models import Bill, Category, User  # nopep8
+    def make_shell_context():   # pylint:disable=unused-variable
+        '''Create context for "flask shell" CLI tool.'''
+        from .auth.models import User
+        from .tally.models import Bill, Category
         return {
             'db': db,
             'User': User,

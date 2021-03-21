@@ -1,4 +1,6 @@
-from tally.models import User
+# pylint:disable=unused-argument
+
+from tally.auth.models import User
 
 
 def test_sample_test(session):

@@ -11,8 +11,7 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "tally:create_app",
-                "FLASK_ENV": "development",
-                "FLASK_DEBUG": "0"
+                "FLASK_ENV": "development"
             },
             "args": [
                 "run",

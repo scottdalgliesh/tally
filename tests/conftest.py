@@ -13,6 +13,7 @@ from tally.tally.models import Bill, Category
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = None
     TESTING = True
+    WTF_CSRF_ENABLED = False
 
 
 @pytest.fixture(scope='session')

@@ -1,43 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tally</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
 
-<body>
+    {% if title %}
+      <title>Tally - {{ title }}</title>
+    {% else %}
+      <title>Tally</title>
+    {% endif %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body>
     <header>
-        <div class="pad-sides" id="topnav">
-            <div class="topnav-item topnav-push">
-                <h1>
-                    <a href="#" class="hide-link">Tally</a>
-                </h1>
-            </div>
-            <div class="topnav-item">
-                <span><a href="#"  class="hide-link">Sign In</a></span>
-            </div>
-            <div class="topnav-item">
-                <a href="#"  class="hide-link">Register</a>
-            </div>
+      <div class="pad-sides" id="topnav">
+        <div class="topnav-item topnav-push">
+          <h1>
+            <a href="{{ url_for('tally.home') }}" class="hide-link">Tally</a>
+          </h1>
         </div>
+        <div class="topnav-item">
+          <span>
+            <a href="{{ url_for('auth.login') }}" class="hide-link">Sign In</a>
+          </span>
+        </div>
+        <div class="topnav-item">
+          <a href="{{ url_for('auth.register') }}" class="hide-link">Register</a>
+        </div>
+      </div>
     </header>
     <div id="grid-container">
-        <div class="pad-sides" id="sidenav">
-            <nav>
-                <h3>Navigation</h3>
-                <a href="#">Page 1</a>
-                <a href="#">Page 2</a>
-                <a href="#">Page 3</a>
-            </nav>
-        </div>
-        <main class="pad-sides" id="maincontent">
-            {% block content %}{% endblock %}
-        </main>
+      <div class="pad-sides" id="sidenav">
+        <nav>
+          <h3>Navigation</h3>
+          <a href="#">Page 1</a>
+          <a href="#">Page 2</a>
+          <a href="#">Page 3</a>
+        </nav>
+      </div>
+      <main class="pad-sides" id="maincontent">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </main>
     </div>
-</body>
-
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

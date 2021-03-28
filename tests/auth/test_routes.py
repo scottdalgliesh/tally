@@ -1,5 +1,7 @@
 # pylint:disable=unused-argument
 import pytest
+from flask import request
+from flask_login import current_user
 from tally.auth.models import User
 
 valid = True
@@ -37,3 +39,75 @@ def test_register(session, client, data, is_valid):
     )
     assert msg_flashed is is_valid
     assert user_created is is_valid
+
+
+test_input = [
+    pytest.param(
+        {
+            'username': 'scott',
+            'password': '123',
+        },
+        valid,
+        id='valid input'
+    ),
+    pytest.param(
+        {
+            'username': 'scott',
+            'password': 'wrong pass',
+        },
+        invalid,
+        id='invalid password'
+    ),
+    pytest.param(
+        {
+            'username': 'wrong username',
+            'password': '123',
+        },
+        invalid,
+        id='invalid username'
+    ),
+]
+
+
+@pytest.mark.parametrize('data, is_valid', test_input)
+def test_login(session, client, data, is_valid):
+    client.post(r'/auth/login?next=%2Fauth%2Faccount',
+                data=data, follow_redirects=True)
+    if is_valid:
+        assert current_user.username == data['username']
+        assert request.url_rule.rule == '/auth/account'
+    else:
+        assert current_user.is_anonymous
+
+
+def test_logout(session, client, logged_in):
+    client.get('/auth/logout')
+    assert current_user.is_anonymous
+
+
+test_input = [
+    pytest.param(
+        {
+            'username': 'new_username',
+        },
+        valid,
+        id='valid input'
+    ),
+    pytest.param(
+        {
+            'username': 'sarah',
+        },
+        invalid,
+        id='invalid input'
+    ),
+]
+
+
+@pytest.mark.parametrize('data, is_valid', test_input)
+def test_account(session, client, logged_in, data, is_valid):
+    client.post('/auth/account', data=data)
+    if is_valid:
+        assert not User.query.filter_by(username='scott').first()
+        assert User.query.filter_by(username=data['username']).first()
+    else:
+        assert User.query.filter_by(username='scott').first()

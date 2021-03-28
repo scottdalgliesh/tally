@@ -35,11 +35,19 @@
         </div>
         <div class="topnav-item">
           <span>
-            <a href="{{ url_for('auth.login') }}" class="hide-link">Sign In</a>
+            {% if current_user.is_authenticated %}
+              <a href="{{ url_for('auth.account') }}" class="hide-link">Account</a>
+            {% else %}
+              <a href="{{ url_for('auth.login') }}" class="hide-link">Sign In</a>
+            {% endif %}
           </span>
         </div>
         <div class="topnav-item">
-          <a href="{{ url_for('auth.register') }}" class="hide-link">Register</a>
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.logout') }}" class="hide-link">Logout</a>
+          {% else %}
+            <a href="{{ url_for('auth.register') }}" class="hide-link">Register</a>
+          {% endif %}
         </div>
       </div>
     </header>

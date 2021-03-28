@@ -3,10 +3,10 @@
 from datetime import date
 
 import pytest
-from tally import create_app
+from tally import bcrypt, create_app
 from tally import db as _db
-from tally.config import Config
 from tally.auth.models import User
+from tally.config import Config
 from tally.tally.models import Bill, Category
 
 
@@ -33,8 +33,14 @@ def app(tmp_path_factory, worker_id):
 def populate_test_db(db):
     """Populate test database with sample data."""
     users = [
-        User(username='scott', password='123'),
-        User(username='sarah', password='123'),
+        User(
+            username='scott',
+            password=bcrypt.generate_password_hash('123').decode('utf-8'),
+        ),
+        User(
+            username='sarah',
+            password=bcrypt.generate_password_hash('123').decode('utf-8'),
+        ),
     ]
     db.session.add_all(users)
     db.session.commit()
@@ -89,3 +95,10 @@ def session(db):
     transaction.rollback()
     connection.close()
     session.remove()
+
+
+@pytest.fixture
+def logged_in(client, session):
+    client.post('/auth/login',
+                data={'username': 'scott', 'password': '123'},
+                follow_redirects=True)

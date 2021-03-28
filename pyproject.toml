@@ -24,6 +24,7 @@ disable = [
 ]
 
 [tool.pytest.ini_options]
+addopts = "-n 4 --durations=5"
 testpaths = ["tests"]
 
 [tool.poetry]

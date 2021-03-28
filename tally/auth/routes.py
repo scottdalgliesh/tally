@@ -67,8 +67,7 @@ def account():
     if form.validate_on_submit():
         current_user.username = form.username.data
         db.session.commit()
-        flash('Account information updated. Please re-login to take effect.', 'success')
-        return redirect(url_for('tally.home'))
+        flash('Account information updated.', 'success')
     if request.method == 'GET':
         form.username.data = current_user.username
     return render_template('account.html', title='Account', form=form)

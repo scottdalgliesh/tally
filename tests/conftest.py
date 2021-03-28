@@ -46,12 +46,12 @@ def populate_test_db(db):
     db.session.commit()
 
     categs = [
-        Category(name='groceries', username='scott'),
-        Category(name='gas', username='scott'),
-        Category(name='misc', username='scott'),
-        Category(name='groceries', username='sarah'),
-        Category(name='gas', username='sarah'),
-        Category(name='misc', username='sarah'),
+        Category.from_name(name='groceries', username='scott'),
+        Category.from_name(name='gas', username='scott'),
+        Category.from_name(name='misc', username='scott'),
+        Category.from_name(name='groceries', username='sarah'),
+        Category.from_name(name='gas', username='sarah'),
+        Category.from_name(name='misc', username='sarah'),
     ]
     db.session.add_all(categs)
     db.session.commit()

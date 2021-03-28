@@ -1,26 +1,33 @@
 from datetime import date as date_obj
 
 from .. import db
+from ..auth.models import User
 
 
 class Category(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
-    username = db.Column(
-        db.String(30),
-        db.ForeignKey('users.username', onupdate='CASCADE', ondelete='CASCADE')
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')
     )
     hidden = db.Column(db.Boolean, default=False)
     user = db.relationship('User', back_populates='categories')
     bills = db.relationship('Bill', back_populates='category',
                             cascade='all, delete-orphan')
     __table_args__ = (
-        db.UniqueConstraint('username', 'name', name='user-category-uc'),
+        db.UniqueConstraint('user_id', 'name', name='user-category-uc'),
     )
 
     def __repr__(self):
-        return f'<Category(name="{self.name}", username="{self.username}")>'
+        return f'<Category(name="{self.name}", user_id={self.user_id})>'
+
+    @classmethod
+    def from_name(cls, name: str, username: str):
+        """Create new Category by username, rather than user_id"""
+        user = User.query.filter_by(username=username).one()
+        return cls(name=name, user_id=user.id)
 
 
 class Bill(db.Model):
@@ -29,9 +36,9 @@ class Bill(db.Model):
     date = db.Column(db.Date, nullable=False)
     descr = db.Column(db.String, nullable=False)
     value = db.Column(db.Float, nullable=False)
-    username = db.Column(
-        db.String(30),
-        db.ForeignKey('users.username', onupdate='CASCADE', ondelete='CASCADE')
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')
     )
     category_id = db.Column(
         db.Integer,
@@ -43,14 +50,13 @@ class Bill(db.Model):
     def __repr__(self):
         return (
             f'<Bill(date="{self.date}", descr="{self.descr}", '
-            f'value="{self.value}", username="{self.username}", '
+            f'value="{self.value}", user_id={self.user_id}, '
             f'category_id={self.category_id})>')
 
     @classmethod
     def from_name(cls, date: date_obj, descr: str, value: float,
                   username: str, category_name: str):
         """Create new Bill by category_name, rather than category_id"""
-        category = db.session.query(Category).filter_by(    # pylint:disable=no-member
-            username=username, name=category_name).one()
-        return cls(date=date, descr=descr, value=value,
-                   username=username, category_id=category.id)
+        user = User.query.filter_by(username=username).one()
+        category = Category.query.filter_by(user_id=user.id, name=category_name).one()
+        return cls(date=date, descr=descr, value=value, user_id=user.id, category_id=category.id)

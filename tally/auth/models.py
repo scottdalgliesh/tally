@@ -10,7 +10,8 @@ def load_user(username):
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
-    username = db.Column(db.String(30), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(60), nullable=False)
     categories = db.relationship('Category', back_populates='user',
                                  cascade='all, delete-orphan')
@@ -19,6 +20,3 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'<User(username="{self.username}")>'
-
-    def get_id(self):
-        return self.username

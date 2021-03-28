@@ -9,14 +9,12 @@ def load_user(username):
 
 
 class User(db.Model, UserMixin):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(60), nullable=False)
-    categories = db.relationship('Category', back_populates='user',
-                                 cascade='all, delete-orphan')
-    bills = db.relationship('Bill', back_populates='user',
-                            cascade='all, delete-orphan')
+    categories = db.relationship("Category", back_populates="user", cascade="all, delete-orphan")
+    bills = db.relationship("Bill", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<User(username="{self.username}")>'

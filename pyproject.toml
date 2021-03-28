@@ -1,3 +1,27 @@
-[tool.autopep8]
-exclude = "*migrations/*"
-max-line-length = "99"
+[tool.black]
+exclude = '/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|\.svn|_build|buck-out|build|dist|migrations)/'
+line-length = 98
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pylint]
+[tool.pylint.master]
+max-line-length = 98
+load-plugins = ["pylint_flask_sqlalchemy"]
+
+[tool.pylint.messages_control]
+disable = [
+    "import-outside-toplevel",
+    "wrong-import-position",
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "invalid-name",
+    "C0330",
+    "C0326",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -21,6 +21,7 @@ flask-shell-ipython = "*"
 autopep8 = "*"
 pytest-xdist = "*"
 pytest-flask = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.8"

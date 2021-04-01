@@ -1,0 +1,8 @@
+{% from 'macros.html' import render_form %}
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Manage Categories</h1>
+    <hr>
+    {{ render_form(form, 'Edit Category') }}
+{% endblock content %}

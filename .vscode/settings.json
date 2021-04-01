@@ -10,4 +10,7 @@
     },
     "python.formatting.provider": "black",
     "editor.formatOnSave": true,
+    "emmet.includeLanguages": {
+        "jinja-html": "html",
+    }
 }

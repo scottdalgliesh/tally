@@ -20,10 +20,10 @@ class Category(db.Model):
         return f'<Category(name="{self.name}", user_id={self.user_id})>'
 
     @classmethod
-    def from_name(cls, name: str, username: str):
+    def from_name(cls, name: str, username: str, hidden: bool = False):
         """Create new Category by username, rather than user_id"""
         user = User.query.filter_by(username=username).one()
-        return cls(name=name, user_id=user.id)
+        return cls(name=name, user_id=user.id, hidden=hidden)
 
 
 class Bill(db.Model):

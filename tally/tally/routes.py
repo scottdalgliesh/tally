@@ -1,5 +1,5 @@
 from flask import redirect, render_template, url_for
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from .. import db
 from . import bp
@@ -13,6 +13,7 @@ def home():
 
 
 @bp.route("/categories", methods=["GET", "POST"])
+@login_required
 def categories():
     form = CategoryForm()
     if form.validate_on_submit():
@@ -28,6 +29,7 @@ def categories():
 
 
 @bp.route("/edit_category/<string:category_id>", methods=["GET", "POST"])
+@login_required
 def edit_category(category_id):
     category = Category.query.get(category_id)
     form = CategoryForm(obj=category)
@@ -40,8 +42,8 @@ def edit_category(category_id):
 
 
 @bp.route("/delete_category/<string:category_id>", methods=["GET", "POST"])
+@login_required
 def delete_category(category_id):
-    # TODO: Add confirmation via bootstrap modal
     category = Category.query.get(category_id)
     db.session.delete(category)
     db.session.commit()

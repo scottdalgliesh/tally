@@ -31,3 +31,29 @@
     <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
 </form>
 {%- endmacro %}
+
+{% macro render_modal(btn_text, btn_category, modal_title, modal_body, modal_url, modal_id) -%}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-{{ btn_category }}" data-toggle="modal" data-target="#modal_{{ modal_id }}">
+  {{ btn_text }}
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modal_{{ modal_id }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel_{{ modal_id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel_{{ modal_id }}">{{ modal_title }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">{{ modal_body }}</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <a href="{{ modal_url }}" class="btn btn-{{ btn_category }}">Confirm</a>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endmacro %}

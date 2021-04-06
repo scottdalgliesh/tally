@@ -55,3 +55,16 @@
   </div>
 </div>
 {%- endmacro %}
+
+{% macro render_sidenav_item(route, label) -%}
+<li class="nav-item">
+  <a 
+  href="{{ url_for(route) }}" 
+  {% if request.path == url_for(route) %}
+    class="nav-link active"
+  {% else %}
+    class="nav-link"
+  {% endif %}
+  >{{label}}</a>
+</li>
+{%- endmacro %}

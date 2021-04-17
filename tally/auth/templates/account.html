@@ -1,6 +1,10 @@
 {% from 'macros.html' import render_form %}
 {% extends "base.html" %}
 {% block content %}
-    <h1>Account Page</h1>
-    <div>{{ render_form(form, 'Update account information') }}</div>
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">Account</h1>
+            {{ render_form(form, 'Update Account Information') }}
+        </div>
+    </div>
 {% endblock content %}

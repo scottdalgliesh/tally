@@ -1,4 +1,4 @@
-
+// Nord Color Palette
 $nord0: #2e3440;
 $nord1: #3b4252;
 $nord2: #434c5e;
@@ -15,3 +15,18 @@ $nord12: #d08770;
 $nord13: #ebcb8b;
 $nord14: #a3be8c;
 $nord15: #b48ead;
+
+// Bootstap Theme overrides
+$primary: $nord8;
+$secondary: $nord9;
+$success: $nord14;
+$danger: $nord11;
+$warning: $nord13;
+$info: $nord8;
+$light: $nord6;
+$dark: $nord0;
+
+$body_bg: $nord6;
+$body_color: $nord0;
+$link-color: $nord8;
+$table-color: $nord10;

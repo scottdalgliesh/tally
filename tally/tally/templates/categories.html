@@ -1,35 +1,39 @@
 {% from 'macros.html' import render_form, render_modal %}
 {% extends "base.html" %}
 {% block content %}
-    <h1>Manage Categories</h1>
-    <hr>
-    {% if not categories %}
-        <p>No categories added yet.</p>
-    {% else %}
-        <table class="table table-striped">
-            <tr>
-                <th>Category</th>
-                <th>Hidden</th>
-                <th></th>
-            </tr>
-            {% for category in categories %}
-            <tr>
-                <td>{{ category.name }}</th>
-                <td>{{ category.hidden }}</th>
-                <td>
-                    <a href="{{ url_for('tally.edit_category', category_id=category.id) }}" class='btn btn-warning'>Edit</a>
-                    {{ render_modal(
-                        "Delete",
-                        "danger",
-                        "Confirm Action",
-                        "Are you sure you want to delete category '" + category.name + "'?",
-                        url_for('tally.delete_category', category_id=category.id ),
-                        category.id
-                    ) }}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-    <div>{{ render_form(form, "Add a new category") }}</div>
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">Manage Categories</h1>
+            <hr>
+            {% if not categories %}
+                <p>No categories added yet.</p>
+            {% else %}
+                <table class="table table-primary table-striped">
+                    <tr>
+                        <th>Category</th>
+                        <th>Hidden</th>
+                        <th></th>
+                    </tr>
+                    {% for category in categories %}
+                    <tr>
+                        <td>{{ category.name }}</th>
+                        <td>{{ category.hidden }}</th>
+                        <td>
+                            <a href="{{ url_for('tally.edit_category', category_id=category.id) }}" class='btn btn-warning'>Edit</a>
+                            {{ render_modal(
+                                "Delete",
+                                "danger",
+                                "Confirm Action",
+                                "Are you sure you want to delete category '" + category.name + "'?",
+                                url_for('tally.delete_category', category_id=category.id ),
+                                category.id
+                            ) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <div>{{ render_form(form, "Add a new category") }}</div>
+        </div>
+    </div>
 {% endblock content %}

@@ -1,6 +1,10 @@
 {% from 'macros.html' import render_form %}
 {% extends "base.html" %}
 {% block content %}
-    <h1>Register Page</h1>
-    <div>{{ render_form(form, 'User Creation') }}</div>
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">Register</h1>
+            <div>{{ render_form(form, 'User Creation') }}</div>
+        </div>
+    </div>
 {% endblock content %}

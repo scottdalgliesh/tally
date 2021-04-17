@@ -2,7 +2,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Manage Categories</h1>
-    <hr>
-    {{ render_form(form, 'Edit Category') }}
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">Manage Categories</h1>
+            <hr>
+            {{ render_form(form, 'Edit Category') }}
+        </div>
+    </div>
 {% endblock content %}

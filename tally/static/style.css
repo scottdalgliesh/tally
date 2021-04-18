@@ -1982,15 +1982,15 @@ progress {
 
 .table {
   --bs-table-bg: transparent;
-  --bs-table-striped-color: #5e81ac;
+  --bs-table-striped-color: #2e3440;
   --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
-  --bs-table-active-color: #5e81ac;
+  --bs-table-active-color: #2e3440;
   --bs-table-active-bg: rgba(0, 0, 0, 0.1);
-  --bs-table-hover-color: #5e81ac;
+  --bs-table-hover-color: #2e3440;
   --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
   width: 100%;
   margin-bottom: 1rem;
-  color: #5e81ac;
+  color: #2e3440;
   vertical-align: top;
   border-color: #dee2e6;
 }
@@ -11459,4 +11459,12 @@ fieldset:disabled .btn {
 
 html, body {
   height: 100%;
+}
+
+.side-nav {
+  max-width: 200px;
+}
+
+#logo {
+  width: 36px;
 }

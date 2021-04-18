@@ -6,7 +6,7 @@
         "--rcfile=pyproject.toml",
     ],
     "files.associations": {
-        "*.html": "jinja-html"
+        // "*.html": "jinja-html"
     },
     "python.formatting.provider": "black",
     "editor.formatOnSave": true,

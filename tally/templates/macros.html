@@ -61,9 +61,9 @@
   <a 
   href="{{ url_for(route) }}" 
   {% if request.path == url_for(route) %}
-    class="nav-link active"
-  {% else %}
     class="nav-link"
+  {% else %}
+    class="nav-link text-muted"
   {% endif %}
   >{{label}}</a>
 </li>

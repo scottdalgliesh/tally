@@ -13,19 +13,23 @@
   <title>Tally</title>
   {% endif %}
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <body>
   <div class="container-fluid m-0 p-0 h-100">
     <div class="row h-100 m-0">
       <div class="col-2 d-flex flex-column p-3 bg-dark side-nav">
-        <ul class="nav nav-pills flex-column">
+        <ul class="nav flex-column">
           <a class="d-flex align-items-center justify-content-center fs-4 text-decoration-none mb-3 text-white"
-            href="{{ url_for('tally.home') }}">Tally</a>
+            href="{{ url_for('tally.home') }}">
+            <img src="{{ url_for('static', filename='logo.svg') }}" alt="logo image" id="logo">
+            <span class="m-1">Tally</span>
+          </a>
           {{ render_sidenav_item('tally.home', 'Home') }}
           {{ render_sidenav_item('tally.categories', 'Categories') }}
-          <li class="nav-item"><a href="#" class="nav-link">Page 2</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">Page 3</a></li>
+          <li class="nav-item"><a href="#" class="nav-link text-muted">Page 2</a></li>
+          <li class="nav-item"><a href="#" class="nav-link text-muted">Page 3</a></li>
           <hr class="border border-white">
           {% if current_user.is_authenticated %}
           {{ render_sidenav_item('auth.account', 'Account') }}

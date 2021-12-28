@@ -7,29 +7,28 @@ multi_line_output = 3
 profile = "black"
 
 [tool.pylint]
-    [tool.pylint.master]
-    load-plugins = ["pylint_flask_sqlalchemy"]
-    max-line-length = 98
+  [tool.pylint.master]
+  load-plugins = ["pylint_flask_sqlalchemy"]
+  max-line-length = 98
 
-    [tool.pylint.typecheck]
-    ignored-classes = "scoped_session"
+  [tool.pylint.typecheck]
+  ignored-classes = "scoped_session"
 
-    [tool.pylint.messages_control]
-    disable = [
-      "import-outside-toplevel",
-      "wrong-import-position",
-      "missing-module-docstring",
-      "missing-class-docstring",
-      "missing-function-docstring",
-      "invalid-name",
-      "C0330",
-      "C0326",
-    ]
+  [tool.pylint.messages_control]
+  disable = [
+    "import-outside-toplevel",
+    "wrong-import-position",
+    "missing-module-docstring",
+    "invalid-name",
+    "design",
+    "C0330",
+    "C0326",
+  ]
 
 [tool.pytest]
-    [tool.pytest.ini_options]
-    addopts = "-n 4 --durations=5"
-    testpaths = ["tests"]
+  [tool.pytest.ini_options]
+  addopts = "-n 4 --durations=5"
+  testpaths = ["tests"]
 
 [tool.poetry]
 name = "tally"
@@ -38,27 +37,26 @@ description = "Flask application for tracking expense data from RBC's pdf credit
 authors = ["Scott Dalgliesh"]
 license = "MIT"
 
-    [tool.poetry.dependencies]
-    python = "^3.8"
-    Flask = "^1.1.2"
-    Flask-Bcrypt = "^0.7.1"
-    Flask-Login = "^0.5.0"
-    Flask-Migrate = "^2.7.0"
-    Flask-SQLAlchemy = "^2.5.1"
-    Flask-WTF = "^0.14.3"
-    WTForms = { extras = ["email"], version = "^2.3.3" }
-    WTForms-Alchemy = "^0.17.0"
-    python-dotenv = "^0.16.0"
+  [tool.poetry.dependencies]
+  python = "^3.10"
+  Flask = "^2.0"
+  Flask-Bcrypt = "^0.7.1"
+  Flask-Login = "^0.5.0"
+  Flask-Migrate = "^3.1.0"
+  Flask-SQLAlchemy = "^2.5.1"
+  Flask-WTF = "^1.0"
+  WTForms = { extras = ["email"], version = "^2.3.3" }
+  python-dotenv = "^0.16.0"
 
-    [tool.poetry.dev-dependencies]
-    pylint = "^2.7.2"
-    pylint-flask-sqlalchemy = "^0.2.0"
-    pytest = "^6.2.2"
-    flask-shell-ipython = "^0.4.1"
-    pytest-xdist = "^2.2.1"
-    pytest-flask = "^1.2.0"
-    pytest-cov = "^2.11.1"
-    black = "^20.8b1"
+  [tool.poetry.dev-dependencies]
+  pylint = "^2.12.2"
+  pylint-flask-sqlalchemy = "^0.2.0"
+  pytest = "^6.2.5"
+  flask-shell-ipython = "^0.4.1"
+  pytest-xdist = "^2.5.0"
+  pytest-flask = "^1.2.0"
+  pytest-cov = "^3.0.0"
+  black = "^21.12b0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -12,7 +12,7 @@ class CategoryForm(FlaskForm):
     hidden = BooleanField("hidden field")
     submit = SubmitField("Save")
 
-    def validate_name(self, name):
+    def validate_name(self, name: StringField) -> None:
         # if 'id' provided to form, allow name to equal existing value
         if self.id.data and name.data.lower() == Category.query.get(self.id.data).name.lower():
             return

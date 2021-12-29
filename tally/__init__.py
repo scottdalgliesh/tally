@@ -14,7 +14,7 @@ login_manager.login_view = "auth.login"
 login_manager.login_message_category = "info"
 
 
-def create_app(config=Config):
+def create_app(config: Config = Config()) -> Flask:
     """App factory."""
     app = Flask(__name__)
     app.config.from_object(config)
@@ -30,7 +30,7 @@ def create_app(config=Config):
     app.register_blueprint(tally.bp)
 
     @app.shell_context_processor
-    def make_shell_context():  # pylint:disable=unused-variable
+    def make_shell_context() -> dict:  # pylint:disable=unused-variable
         """Create context for "flask shell" CLI tool."""
         from .auth.models import User
         from .tally.models import Bill, Category

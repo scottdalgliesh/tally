@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from datetime import date as date_obj
 
 from .. import db
 from ..auth.models import User
 
 
-class Category(db.Model):
+class Category(db.Model):  # type: ignore
     __tablename__ = "categories"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
@@ -16,17 +18,17 @@ class Category(db.Model):
     bills = db.relationship("Bill", back_populates="category", cascade="all, delete-orphan")
     __table_args__ = (db.UniqueConstraint("user_id", "name", name="user-category-uc"),)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'<Category(name="{self.name}", user_id={self.user_id})>'
 
     @classmethod
-    def from_name(cls, name: str, username: str, hidden: bool = False):
+    def from_name(cls, name: str, username: str, hidden: bool = False) -> Category:
         """Create new Category by username, rather than user_id"""
         user = User.query.filter_by(username=username).one()
         return cls(name=name, user_id=user.id, hidden=hidden)
 
 
-class Bill(db.Model):
+class Bill(db.Model):  # type: ignore
     __tablename__ = "bills"
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
@@ -41,7 +43,7 @@ class Bill(db.Model):
     user = db.relationship("User", back_populates="bills")
     category = db.relationship("Category", back_populates="bills")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'<Bill(date="{self.date}", descr="{self.descr}", '
             f'value="{self.value}", user_id={self.user_id}, '
@@ -51,7 +53,7 @@ class Bill(db.Model):
     @classmethod
     def from_name(
         cls, date: date_obj, descr: str, value: float, username: str, category_name: str
-    ):
+    ) -> Bill:
         """Create new Bill by category_name, rather than category_id"""
         user = User.query.filter_by(username=username).one()
         category = Category.query.filter_by(user_id=user.id, name=category_name).one()

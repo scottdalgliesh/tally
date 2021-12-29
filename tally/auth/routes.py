@@ -1,5 +1,6 @@
 from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from werkzeug import Response
 
 from .. import bcrypt, db
 from . import bp
@@ -7,18 +8,19 @@ from .forms import UserLoginForm, UserRegisterForm, UserUpdateForm
 from .models import User
 
 
-def is_safe_url(next_url):
+def is_safe_url(next_url: str) -> bool:
     """Verify next_url is an internal application route prior to redirection."""
-    routes = [
-        rule.rule
-        for rule in current_app.url_map.iter_rules()
-        if "GET" in rule.methods and "static" not in rule.rule
-    ]
+    routes = []
+    for rule in current_app.url_map.iter_rules():
+        if rule.methods is None:
+            continue
+        if "GET" in rule.methods and "static" not in rule.rule:
+            routes.append(rule.rule)
     return next_url in routes
 
 
 @bp.route("/register", methods=["GET", "POST"])
-def register():
+def register() -> str | Response:
     """User registration page."""
     if current_user.is_authenticated:
         return redirect(url_for("tally.home"))
@@ -35,7 +37,7 @@ def register():
 
 
 @bp.route("/login", methods=["GET", "POST"])
-def login():
+def login() -> str | Response:
     """User login page."""
     if current_user.is_authenticated:
         return redirect(url_for("tally.home"))
@@ -56,7 +58,7 @@ def login():
 
 @bp.route("/logout")
 @login_required
-def logout():
+def logout() -> Response:
     """User logout page."""
     logout_user()
     return redirect(url_for("tally.home"))
@@ -64,7 +66,7 @@ def logout():
 
 @bp.route("/account", methods=["GET", "POST"])
 @login_required
-def account():
+def account() -> str | Response:
     """User account page."""
     form = UserUpdateForm()
     if form.validate_on_submit():

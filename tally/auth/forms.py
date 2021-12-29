@@ -23,7 +23,7 @@ class UserRegisterForm(BaseUserForm):
     )
     submit = SubmitField("Sign Up")
 
-    def validate_username(self, username):
+    def validate_username(self, username: StringField) -> None:
         if User.query.filter_by(username=username.data).first():
             raise ValidationError("Username is taken.")
 
@@ -37,7 +37,7 @@ class UserUpdateForm(BaseUserForm):
     password = None
     submit = SubmitField("Update")
 
-    def validate_username(self, username):
+    def validate_username(self, username: StringField) -> None:
         if username.data == current_user.username:
             return
         if User.query.filter_by(username=username.data).first():

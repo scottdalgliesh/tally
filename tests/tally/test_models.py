@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=[unused-argument, missing-function-docstring]
 from tally.auth.models import User
 from tally.tally.models import Category
 

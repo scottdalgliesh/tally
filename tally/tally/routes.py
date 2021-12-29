@@ -10,12 +10,14 @@ from .models import Category
 
 @bp.route("/")
 def home() -> str:
+    """Home page."""
     return render_template("home.html")
 
 
 @bp.route("/categories", methods=["GET", "POST"])
 @login_required
 def categories() -> str | Response:
+    """Display user's existing categories and allow new categories to be created."""
     form = CategoryForm()
     if form.validate_on_submit():
         categ = Category.from_name(
@@ -32,6 +34,7 @@ def categories() -> str | Response:
 @bp.route("/edit_category/<string:category_id>", methods=["GET", "POST"])
 @login_required
 def edit_category(category_id: int) -> str | Response:
+    """Edit an existing category."""
     category = Category.query.get(category_id)
     form = CategoryForm(obj=category)
     if form.validate_on_submit():
@@ -45,6 +48,7 @@ def edit_category(category_id: int) -> str | Response:
 @bp.route("/delete_category/<string:category_id>", methods=["GET", "POST"])
 @login_required
 def delete_category(category_id: int) -> Response:
+    """Delete an existing category."""
     category = Category.query.get(category_id)
     db.session.delete(category)
     db.session.commit()

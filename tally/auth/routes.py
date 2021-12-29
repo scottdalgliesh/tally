@@ -51,8 +51,7 @@ def login() -> str | Response:
             if next_url and not is_safe_url(next_url):
                 return abort(400)
             return redirect(next_url or url_for("tally.home"))
-        else:
-            flash("Login failed. Please check username and password.", "danger")
+        flash("Login failed. Please check username and password.", "danger")
     return render_template("login.html", title="Login", form=form)
 
 
@@ -70,7 +69,7 @@ def account() -> str | Response:
     """User account page."""
     form = UserUpdateForm()
     if form.validate_on_submit():
-        current_user.username = form.username.data
+        current_user.username = form.username.data  # pylint: disable=[assigning-non-slot]
         db.session.commit()
         flash("Account information updated.", "success")
     if request.method == "GET":

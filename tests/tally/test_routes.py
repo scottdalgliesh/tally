@@ -1,4 +1,4 @@
-# pylint:disable=unused-argument
+# pylint: disable=[unused-argument, missing-function-docstring]
 import pytest
 from flask_login import current_user
 

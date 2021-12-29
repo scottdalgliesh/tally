@@ -29,4 +29,8 @@
         ".vscode/**",
         "**/bootstrap/**",
     ],
+    // to make package accessible from tests/ directories  
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}"
+    },
 }

@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=[unused-argument, missing-function-docstring]
 from tally import bcrypt
 from tally.auth.models import User
 

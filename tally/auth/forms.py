@@ -1,3 +1,4 @@
+# pylint: disable=[missing-class-docstring]
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -24,6 +25,8 @@ class UserRegisterForm(BaseUserForm):
     submit = SubmitField("Sign Up")
 
     def validate_username(self, username: StringField) -> None:
+        """Verify username is unique."""
+        # pylint: disable=[no-self-use]
         if User.query.filter_by(username=username.data).first():
             raise ValidationError("Username is taken.")
 
@@ -38,6 +41,8 @@ class UserUpdateForm(BaseUserForm):
     submit = SubmitField("Update")
 
     def validate_username(self, username: StringField) -> None:
+        """Verify new username is not same as old username or not unique."""
+        # pylint: disable=[no-self-use]
         if username.data == current_user.username:
             return
         if User.query.filter_by(username=username.data).first():

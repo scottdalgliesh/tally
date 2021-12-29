@@ -12,6 +12,8 @@ from tally.tally.models import Bill, Category
 
 
 class TestConfig(Config):
+    """App config class for tests."""
+
     SQLALCHEMY_DATABASE_URI = None
     TESTING = True
     WTF_CSRF_ENABLED = False

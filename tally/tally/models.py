@@ -7,6 +7,8 @@ from ..auth.models import User
 
 
 class Category(db.Model):  # type: ignore
+    """Database schema for categories."""
+
     __tablename__ = "categories"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
@@ -29,6 +31,8 @@ class Category(db.Model):  # type: ignore
 
 
 class Bill(db.Model):  # type: ignore
+    """Database schema for bills (individual purchase records)."""
+
     __tablename__ = "bills"
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)

@@ -1,3 +1,4 @@
+# pylint: disable=[missing-class-docstring]
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, HiddenField, StringField, SubmitField, ValidationError
@@ -13,6 +14,7 @@ class CategoryForm(FlaskForm):
     submit = SubmitField("Save")
 
     def validate_name(self, name: StringField) -> None:
+        """Allow category name to equal existing, otherwise ensure it is unique."""
         # if 'id' provided to form, allow name to equal existing value
         if self.id.data and name.data.lower() == Category.query.get(self.id.data).name.lower():
             return

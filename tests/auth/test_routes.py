@@ -45,7 +45,7 @@ def test_login(session, client, data, is_valid):
     client.post(r"/auth/login?next=%2Fauth%2Faccount", data=data, follow_redirects=True)
     if is_valid:
         assert current_user.username == data["username"]
-        assert request.url_rule.rule == "/auth/account"
+        assert request.url_rule and request.url_rule.rule == "/auth/account"
     else:
         assert current_user.is_anonymous
 

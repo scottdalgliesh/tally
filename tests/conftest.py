@@ -14,7 +14,7 @@ from tally.tally.models import Bill, Category
 class TestConfig(Config):
     """App config class for tests."""
 
-    SQLALCHEMY_DATABASE_URI = None
+    SQLALCHEMY_DATABASE_URI = ""  # to be overridden with temp directory
     TESTING = True
     WTF_CSRF_ENABLED = False
 
@@ -28,8 +28,8 @@ def app(tmp_path_factory, worker_id):
     tmp_path.mkdir()
 
     # instantiate app
-    TestConfig.SQLALCHEMY_DATABASE_URI = f"sqlite:///{tmp_db}"
-    app = create_app(TestConfig)
+    test_config = TestConfig(SQLALCHEMY_DATABASE_URI=f"sqlite:///{tmp_db}")
+    app = create_app(test_config)
     return app
 
 

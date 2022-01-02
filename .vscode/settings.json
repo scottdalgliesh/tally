@@ -33,4 +33,29 @@
     "terminal.integrated.env.windows": {
         "PYTHONPATH": "${workspaceFolder}"
     },
+    "search.exclude": {
+        "tally/static/bootstrap": true,
+    },
+    "cSpell.words": [
+        "bcrypt",
+        "Bcrypt",
+        "Bootstrap",
+        "categ",
+        "dbapi",
+        "descr",
+        "nord",
+        "Nord",
+        "ondelete",
+        "onupdate",
+        "tika",
+        "werkzeug",
+        "wtforms"
+    ],
+    "cSpell.ignorePaths": [
+        ".git/objects",
+        ".vscode",
+        "tests"
+    ],
+    "python.linting.mypyEnabled": true,
+    "cSpell.enabled": true,
 }

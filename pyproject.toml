@@ -29,6 +29,7 @@ warn_unreachable = true
     "flask_sqlalchemy.*",
     "wtforms.*",
     "flask_wtf.*",
+    "tika",
   ]
   ignore_missing_imports = true
 
@@ -73,6 +74,7 @@ license = "MIT"
   Flask-WTF = "^1.0"
   WTForms = { extras = ["email"], version = "^2.3.3" }
   python-dotenv = "^0.16.0"
+  tika = "^1.24"
 
   [tool.poetry.dev-dependencies]
   pylint = "^2.12.2"

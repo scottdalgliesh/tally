@@ -1,5 +1,18 @@
 {% macro render_form(form, legend=None) -%}
-<form method="POST" action="">
+
+{# check if form is a file form #}
+{% set ns = namespace(isFileForm=False) %}
+{% for field in form %}
+  {% if field.type == "FileField" %}
+    {% set ns.isFileForm=True %}
+  {% endif %}
+{% endfor %}
+
+{% if ns.isFileForm %}
+  <form method="POST" action="" enctype="multipart/form-data">
+{% else %}
+  <form method="POST" action="">
+{% endif %}
     {{ form.hidden_tag() }}
     <fieldset class="form-group">
         {% if legend %}

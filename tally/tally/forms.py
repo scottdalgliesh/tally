@@ -1,6 +1,7 @@
 # pylint: disable=[missing-class-docstring]
 from flask_login import current_user
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
 from wtforms import BooleanField, HiddenField, StringField, SubmitField, ValidationError
 from wtforms.validators import Length, data_required
 
@@ -23,3 +24,15 @@ class CategoryForm(FlaskForm):
         existing_categories = [categ.name.lower() for categ in current_user.categories]
         if name.data.lower() in existing_categories:
             raise ValidationError("Category already exists.")
+
+
+class StatementForm(FlaskForm):
+    file = FileField("file", validators=[FileRequired()])
+    submit = SubmitField("Parse")
+
+    def validate_file(self, file: FileField) -> None:
+        """Allow only file extension of '.pdf'."""
+        if file.data:
+            extension = file.data.filename.split(".")[-1].lower()
+            if extension != "pdf":
+                raise ValidationError("Only PDF documents are accepted.")

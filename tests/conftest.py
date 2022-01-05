@@ -1,6 +1,7 @@
 # pylint:disable=[missing-function-docstring, redefined-outer-name, unused-argument]
 
 from datetime import date
+from pathlib import Path
 
 import pytest
 
@@ -15,6 +16,7 @@ class TestConfig(Config):
     """App config class for tests."""
 
     SQLALCHEMY_DATABASE_URI = ""  # to be overridden with temp directory
+    UPLOAD_FOLDER = Path("")  # to be overridden with temp directory
     TESTING = True
     WTF_CSRF_ENABLED = False
 
@@ -27,8 +29,14 @@ def app(tmp_path_factory, worker_id):
     tmp_db = tmp_path / "test.db"
     tmp_path.mkdir()
 
+    # use temp directory for testing app config
+    # IMPORTANT: DATABASE_URI & UPLOAD_FOLDER modified from production values
+    test_config = TestConfig(
+        SQLALCHEMY_DATABASE_URI=f"sqlite:///{tmp_db}",
+        UPLOAD_FOLDER=tmp_path,
+    )
+
     # instantiate app
-    test_config = TestConfig(SQLALCHEMY_DATABASE_URI=f"sqlite:///{tmp_db}")
     app = create_app(test_config)
     return app
 

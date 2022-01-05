@@ -28,8 +28,8 @@
           </a>
           {{ render_sidenav_item('tally.home', 'Home') }}
           {{ render_sidenav_item('tally.categories', 'Categories') }}
-          <li class="nav-item"><a href="#" class="nav-link text-muted">Page 2</a></li>
-          <li class="nav-item"><a href="#" class="nav-link text-muted">Page 3</a></li>
+          {{ render_sidenav_item('tally.categorize', 'Categorize New Transactions') }}
+          {{ render_sidenav_item('tally.new_statement', 'Add a New Statement') }}
           <hr class="border border-white">
           {% if current_user.is_authenticated %}
           {{ render_sidenav_item('auth.account', 'Account') }}

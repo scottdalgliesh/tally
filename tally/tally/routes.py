@@ -1,11 +1,13 @@
-from flask import redirect, render_template, url_for
+from flask import current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from werkzeug import Response
+from werkzeug.utils import secure_filename
 
 from .. import db
 from . import bp
-from .forms import CategoryForm
-from .models import Category
+from .forms import CategoryForm, StatementForm
+from .models import Bill, Category
+from .parse import parse_statement
 
 
 @bp.route("/")
@@ -53,3 +55,48 @@ def delete_category(category_id: int) -> Response:
     db.session.delete(category)
     db.session.commit()
     return redirect(url_for("tally.categories"))
+
+
+@bp.route("/new_statement", methods=["GET", "POST"])
+@login_required
+def new_statement() -> str | Response:
+    """Parse new statement and add transactions to database (un-categorized)."""
+    form = StatementForm()
+    if form.validate_on_submit():
+        file = form.file.data
+        filename = current_app.config["UPLOAD_FOLDER"] / secure_filename(file.filename)
+        file.save(filename)
+        try:
+            transactions = parse_statement(filename)
+            for transaction in transactions:
+                bill = Bill(
+                    date=transaction.Date,
+                    descr=transaction.Description,
+                    value=transaction.Value,
+                    user_id=current_user.id,
+                    category=None,
+                )
+                db.session.add(bill)
+            db.session.commit()
+            flash(f"{len(transactions)} transactions parsed and added successfully.", "success")
+        finally:
+            # delete uploaded file after parsing
+            filename.unlink()
+        return redirect(url_for("tally.categorize"))
+    return render_template("new_statement.html", title="New Statement", form=form)
+
+
+@bp.route("/categorize", methods=["GET", "POST"])
+@login_required
+def categorize() -> str | Response:
+    """Review un-categorized transactions, and apply categories."""
+    uncategorized_transactions = db.session.query(Bill).filter_by(
+        user_id=current_user.id,
+        category_id=None,
+    )
+    # TODO: add dynamic fields as described here: https://stackoverflow.com/questions/28375565/add-input-fields-dynamically-with-wtforms
+    return render_template(
+        "categorize.html",
+        title="Categorize",
+        transactions=uncategorized_transactions,
+    )

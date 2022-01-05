@@ -19,6 +19,7 @@ class Config:
     SECRET_KEY: str = "4455c5ee905b7570bc26cf8fee1fac88"
     SQLALCHEMY_DATABASE_URI: str = f"sqlite:///{DB_URL}"
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
+    UPLOAD_FOLDER: Path = ROOT
 
 
 @event.listens_for(Engine, "connect")

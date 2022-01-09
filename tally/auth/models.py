@@ -4,7 +4,7 @@ from typing import Optional
 
 from flask_login import UserMixin
 
-from .. import db, login_manager
+from ..extensions import db, login_manager
 
 
 @login_manager.user_loader
@@ -13,7 +13,7 @@ def load_user(username: str) -> Optional[User]:
     return User.query.get(username)  # type:ignore
 
 
-class User(db.Model, UserMixin):  # type: ignore
+class User(db.Model, UserMixin):
     """User database schema."""
 
     __tablename__ = "users"

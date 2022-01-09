@@ -1,11 +1,27 @@
-from flask import abort, current_app, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    abort,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug import Response
 
-from .. import bcrypt, db
-from . import bp
+from ..extensions import bcrypt, db
 from .forms import UserLoginForm, UserRegisterForm, UserUpdateForm
 from .models import User
+
+bp = Blueprint(
+    "auth",
+    __name__,
+    url_prefix="/auth",
+    template_folder="templates",
+    static_folder="static",
+)
 
 
 def is_safe_url(next_url: str) -> bool:

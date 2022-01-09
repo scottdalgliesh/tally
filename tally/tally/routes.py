@@ -1,14 +1,20 @@
-from flask import current_app, flash, redirect, render_template, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import desc
 from werkzeug import Response
 from werkzeug.utils import secure_filename
 
-from .. import db
-from . import bp
+from ..extensions import db
 from .forms import CategoryForm, MultipleBillCategoryForm, StatementForm
 from .models import Bill, Category
 from .parse import parse_statement
+
+bp = Blueprint(
+    "tally",
+    __name__,
+    template_folder="templates",
+    static_folder="static",
+)
 
 
 @bp.route("/")

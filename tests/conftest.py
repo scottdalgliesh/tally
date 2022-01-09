@@ -5,10 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from tally import bcrypt, create_app
-from tally import db as _db
+from tally.app import create_app
 from tally.auth.models import User
 from tally.config import Config
+from tally.extensions import bcrypt
+from tally.extensions import db as _db
 from tally.tally import parse
 from tally.tally.models import Bill, Category
 

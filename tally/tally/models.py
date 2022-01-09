@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from datetime import date as date_obj
 
-from .. import db
 from ..auth.models import User
+from ..extensions import db
 
 
-class Category(db.Model):  # type: ignore
+class Category(db.Model):
     """Database schema for categories."""
 
     __tablename__ = "categories"
@@ -30,7 +30,7 @@ class Category(db.Model):  # type: ignore
         return cls(name=name, user_id=user.id, hidden=hidden)
 
 
-class Bill(db.Model):  # type: ignore
+class Bill(db.Model):
     """Database schema for bills (individual purchase records)."""
 
     __tablename__ = "bills"

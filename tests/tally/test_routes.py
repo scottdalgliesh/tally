@@ -74,7 +74,7 @@ def test_categorize(client, session):
     uncategorized_bills = Bill.query.filter(Bill.category_id == None).all()
 
     response = client.get("/categorize")
-    html = BeautifulSoup(response.data)
+    html = BeautifulSoup(response.data, features="html.parser")
 
     # check output
     table_body = html.find("tbody")
@@ -97,7 +97,7 @@ def test_categorize(client, session):
 def test_review_all(client):
     bills = Bill.query.join(User).filter_by(username="scott").all()
     response = client.get("/review_all")
-    soup = BeautifulSoup(response.data)
+    soup = BeautifulSoup(response.data, features="html.parser")
     table_body = soup.find("tbody")
     assert len(table_body.find_all("tr")) == len(bills)  # type: ignore
     assert all(

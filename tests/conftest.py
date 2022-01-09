@@ -9,6 +9,7 @@ from tally import bcrypt, create_app
 from tally import db as _db
 from tally.auth.models import User
 from tally.config import Config
+from tally.tally import parse
 from tally.tally.models import Bill, Category
 
 
@@ -113,3 +114,18 @@ def logged_in(client, session):
         data={"username": "scott", "password": "123"},
         follow_redirects=True,
     )
+
+
+@pytest.fixture
+def mock_tika(request, monkeypatch):
+    class MockTika:
+        """Mock Tika.parser response with provided text.
+
+        This must be called by pytest with the indirect=True option.
+        """
+
+        @staticmethod
+        def from_file(url: str) -> dict[str, str]:  # pylint: disable=unused-argument
+            return {"content": request.param}
+
+    monkeypatch.setattr(parse, "parser", MockTika)

@@ -88,6 +88,8 @@ license = "MIT"
   black = "^21.12b0"
   SQLAlchemy = { extras = ["mypy"], version = "^1.4.29" }
   mypy = "^0.930"
+  beautifulsoup4 = "^4.10.0"
+  types-beautifulsoup4 = "^4.10.10"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

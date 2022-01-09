@@ -19,18 +19,20 @@
                                 <th>Category</th>
                             </tr>
                         </thead>
-                        {% for transaction, field in zip(transactions, form.categories) %}
-                        <tr>
-                            <td>{{ transaction.date }}</td>
-                            <td>{{ transaction.descr }}</td>
-                            <td>{{ "{:.2f}".format(transaction.value) }}</td>
-                            <td>
-                                <div class="form-group">
-                                    {{ field.category(class="form-select") }}
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                        <tbody>
+                            {% for transaction, field in zip(transactions, form.categories) %}
+                            <tr>
+                                <td>{{ transaction.date }}</td>
+                                <td>{{ transaction.descr }}</td>
+                                <td>{{ "{:.2f}".format(transaction.value) }}</td>
+                                <td>
+                                    <div class="form-group">
+                                        {{ field.category(class="form-select") }}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
                     <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
                 </form>

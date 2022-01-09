@@ -16,14 +16,16 @@
                             <th>Category</th>
                         </tr>
                     </thead>
-                    {% for transaction in transactions %}
-                    <tr>
-                        <td>{{ transaction.date }}</th>
-                        <td>{{ transaction.descr }}</th>
-                        <td>{{ "{:.2f}".format(transaction.value) }}</th>
-                        <td>{{ transaction.category.name }}</th>
-                    </tr>
-                    {% endfor %}
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.date }}</th>
+                            <td>{{ transaction.descr }}</th>
+                            <td>{{ "{:.2f}".format(transaction.value) }}</th>
+                            <td>{{ transaction.category.name }}</th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             {% endif %}
         </div>

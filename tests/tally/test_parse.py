@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 
-from tally.tally import parse
 from tally.tally.parse import (
     Transaction,
     TransactionSet,
@@ -78,15 +77,16 @@ def test_get_transactions(sample: SampleStatement):
     assert transactions == sample.transactions
 
 
-@pytest.mark.parametrize("sample", test_input)
-def test_parse_statement(monkeypatch, sample: SampleStatement):
-    class MockTika:
-        """Mock Tika.parser response"""
-
-        @staticmethod
-        def from_file(url: str) -> dict[str, str]:  # pylint: disable=unused-argument
-            return {"content": sample.statement_text}
-
-    monkeypatch.setattr(parse, "parser", MockTika)
+@pytest.mark.parametrize(
+    "mock_tika, sample",
+    [
+        pytest.param(sample_statement_1.statement_text, sample_statement_1, id="mid-year"),
+        pytest.param(
+            sample_statement_2.statement_text, sample_statement_2, id="end-of-year-transition"
+        ),
+    ],
+    indirect=["mock_tika"],
+)
+def test_parse_statement(mock_tika, sample: SampleStatement):  # pylint: disable=unused-argument
     transactions = parse_statement(sample.path_to_file)
     assert transactions == sample.transactions

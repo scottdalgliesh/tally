@@ -40,7 +40,7 @@ class StatementForm(FlaskForm):
     file = FileField("file", validators=[FileRequired()])
     submit = SubmitField("Parse")
 
-    def validate_file(self, file: FileField) -> None:
+    def validate_file(self, file: FileField) -> None:  # pylint: disable=no-self-use
         """Allow only file extension of '.pdf'."""
         if file.data:
             extension = file.data.filename.split(".")[-1].lower()

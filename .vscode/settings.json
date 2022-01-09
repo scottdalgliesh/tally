@@ -5,6 +5,7 @@
     "python.linting.pylintArgs": [
         "--rcfile=pyproject.toml",
     ],
+    "python.linting.pylintCategorySeverity.refactor": "Information",
     "files.associations": {
         // "*.html": "jinja-html"
     },

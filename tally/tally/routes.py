@@ -1,11 +1,12 @@
 from flask import current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
+from sqlalchemy import desc
 from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from .. import db
 from . import bp
-from .forms import CategoryForm, StatementForm
+from .forms import CategoryForm, MultipleBillCategoryForm, StatementForm
 from .models import Bill, Category
 from .parse import parse_statement
 
@@ -90,13 +91,57 @@ def new_statement() -> str | Response:
 @login_required
 def categorize() -> str | Response:
     """Review un-categorized transactions, and apply categories."""
-    uncategorized_transactions = db.session.query(Bill).filter_by(
-        user_id=current_user.id,
-        category_id=None,
+    # -1 used for un-categorized items since None is not compatible with SelectField
+    choices = [(category.id, category.name) for category in current_user.categories]
+    choices.insert(0, (-1, ""))
+
+    uncategorized_bills = (
+        db.session.query(Bill)
+        .filter_by(user_id=current_user.id, category_id=None)
+        .order_by(desc(Bill.date))
     )
-    # TODO: add dynamic fields as described here: https://stackoverflow.com/questions/28375565/add-input-fields-dynamically-with-wtforms
+
+    # form choices must be dynamically assigned after instantiation
+    data = {"categories": [{"category": -1} for _ in uncategorized_bills]}
+    form = MultipleBillCategoryForm(data=data)
+    for sub_form in form.categories:
+        sub_form.category.choices = choices
+
+    if form.validate_on_submit():
+        categorized_counter = 0
+        for bill, field in zip(uncategorized_bills, form.categories, strict=True):
+            # ignore entries which have not been modified (i.e. still selected as blank)
+            if field.category.data == -1:
+                continue
+            bill.category_id = field.category.data
+            categorized_counter += 1
+
+        db.session.commit()
+        flash(f"{categorized_counter} bill(s) categorized successfully.", "success")
+        return redirect(url_for("tally.review_all"))
+
     return render_template(
         "categorize.html",
         title="Categorize",
-        transactions=uncategorized_transactions,
+        transactions=uncategorized_bills,
+        form=form,
+        zip=zip,
+    )
+
+
+@bp.route("/review_all", methods=["GET", "POST"])
+@login_required
+def review_all() -> str | Response:
+    """Review categorized transactions."""
+    # pylint: disable=singleton-comparison
+    transactions = (
+        db.session.query(Bill)
+        .filter(Bill.user_id == current_user.id, Bill.category_id != None)
+        .order_by(desc(Bill.date))
+    )
+    # TODO: add edit button
+    return render_template(
+        "bills.html",
+        title="Review All",
+        transactions=transactions,
     )

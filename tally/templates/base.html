@@ -28,8 +28,9 @@
           </a>
           {{ render_sidenav_item('tally.home', 'Home') }}
           {{ render_sidenav_item('tally.categories', 'Categories') }}
-          {{ render_sidenav_item('tally.categorize', 'Categorize New Transactions') }}
           {{ render_sidenav_item('tally.new_statement', 'Add a New Statement') }}
+          {{ render_sidenav_item('tally.categorize', 'Categorize New Transactions') }}
+          {{ render_sidenav_item('tally.review_all', 'Review Categorized Transactions') }}
           <hr class="border border-white">
           {% if current_user.is_authenticated %}
           {{ render_sidenav_item('auth.account', 'Account') }}

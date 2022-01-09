@@ -2,7 +2,17 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
-from wtforms import BooleanField, HiddenField, StringField, SubmitField, ValidationError
+from wtforms import (
+    BooleanField,
+    FieldList,
+    Form,
+    FormField,
+    HiddenField,
+    SelectField,
+    StringField,
+    SubmitField,
+    ValidationError,
+)
 from wtforms.validators import Length, data_required
 
 from .models import Category
@@ -36,3 +46,15 @@ class StatementForm(FlaskForm):
             extension = file.data.filename.split(".")[-1].lower()
             if extension != "pdf":
                 raise ValidationError("Only PDF documents are accepted.")
+
+
+class BillCategoryForm(Form):
+    # This form is intended to be used as a FormField, so it inherits from Form
+    # instead of FlaskForm to avoid generating a CSRF key for each instance.
+    # Note: dynamic choices must be assigned after instantiation
+    category = SelectField("Select a category", choices=[], coerce=int)
+
+
+class MultipleBillCategoryForm(FlaskForm):
+    categories = FieldList(FormField(BillCategoryForm))
+    submit = SubmitField("Save")

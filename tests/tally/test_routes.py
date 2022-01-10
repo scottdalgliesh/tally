@@ -1,5 +1,6 @@
 # pylint: disable=[unused-argument, missing-function-docstring]
 import io
+from datetime import date
 
 import pytest
 from bs4 import BeautifulSoup
@@ -103,3 +104,49 @@ def test_review_all(client):
     assert all(
         val in table_body.getText() for val in ["2020-01-28", "ren's", "300"]  # type: ignore
     )
+
+
+def test_edit_bill(client):
+    bill = Bill.query.get(1)
+    assert bill.descr == "zehrs"
+
+    client.post(
+        "/edit_bill/1",
+        data={
+            "date": date(2000, 1, 1),
+            "description": "Updated description",
+            "value": 1000,
+            "category": 2,
+        },
+    )
+    assert bill.date == date(2000, 1, 1)
+    assert bill.descr == "Updated description"
+    assert bill.value == 1000
+    assert bill.category_id == 2
+
+
+def test_new_bill(client):
+    count = Bill.query.count()
+    client.post(
+        "/new_bill",
+        data={
+            "date": date(3000, 1, 1),
+            "description": "New Bill!",
+            "value": 46,
+            "category": 1,
+        },
+    )
+
+    bill = Bill.query.filter_by(descr="New Bill!").one()
+    assert Bill.query.count() == count + 1
+    assert bill.date == date(3000, 1, 1)
+    assert bill.descr == "New Bill!"
+    assert bill.value == 46
+    assert bill.category_id == 1
+
+
+def test_delete_bill(client):
+    count = Bill.query.count()
+    client.post("delete_bill/1")
+    assert Bill.query.count() == count - 1
+    assert Bill.query.get(1) is None

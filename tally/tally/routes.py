@@ -5,7 +5,7 @@ from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from ..extensions import db
-from .forms import CategoryForm, MultipleBillCategoryForm, StatementForm
+from .forms import BillForm, CategoryForm, MultipleBillCategoryForm, StatementForm
 from .models import Bill, Category
 from .parse import parse_statement
 
@@ -97,26 +97,24 @@ def new_statement() -> str | Response:
 @login_required
 def categorize() -> str | Response:
     """Review un-categorized transactions, and apply categories."""
-    # -1 used for un-categorized items since None is not compatible with SelectField
-    choices = [(category.id, category.name) for category in current_user.categories]
-    choices.insert(0, (-1, ""))
 
     uncategorized_bills = (
         db.session.query(Bill)
         .filter_by(user_id=current_user.id, category_id=None)
         .order_by(desc(Bill.date))
-    )
+    ).all()
 
     # form choices must be dynamically assigned after instantiation
     data = {"categories": [{"category": -1} for _ in uncategorized_bills]}
     form = MultipleBillCategoryForm(data=data)
     for sub_form in form.categories:
-        sub_form.category.choices = choices
+        sub_form.category.choices = current_user.get_category_options()
 
     if form.validate_on_submit():
         categorized_counter = 0
         for bill, field in zip(uncategorized_bills, form.categories, strict=True):
             # ignore entries which have not been modified (i.e. still selected as blank)
+            # -1 used for un-categorized items since None is not compatible with SelectField
             if field.category.data == -1:
                 continue
             bill.category_id = field.category.data
@@ -135,7 +133,7 @@ def categorize() -> str | Response:
     )
 
 
-@bp.route("/review_all", methods=["GET", "POST"])
+@bp.route("/review_all", methods=["GET"])
 @login_required
 def review_all() -> str | Response:
     """Review categorized transactions."""
@@ -145,9 +143,63 @@ def review_all() -> str | Response:
         .filter(Bill.user_id == current_user.id, Bill.category_id != None)
         .order_by(desc(Bill.date))
     )
-    # TODO: add edit button
     return render_template(
         "bills.html",
         title="Review All",
         transactions=transactions,
     )
+
+
+@bp.route("/edit_bill/<int:bill_id>", methods=["GET", "POST"])
+@login_required
+def edit_bill(bill_id: int) -> str | Response:
+    """Edit an existing bill."""
+    bill = Bill.query.get(bill_id)
+    form = BillForm(
+        date=bill.date, description=bill.descr, value=bill.value, category=bill.category_id
+    )
+    form.category.choices = current_user.get_category_options()
+
+    if form.validate_on_submit():
+        bill.date = form.date.data
+        bill.descr = form.description.data
+        bill.value = form.value.data
+        bill.category_id = form.category.data
+        db.session.commit()
+        flash("bill successfully updated", "success")
+        return redirect(url_for("tally.review_all"))
+
+    return render_template("edit_bill.html", title="Edit Bill", form=form)
+
+
+@bp.route("/new_bill", methods=["GET", "POST"])
+@login_required
+def new_bill() -> str | Response:
+    """Add a new bill."""
+    form = BillForm()
+    form.category.choices = current_user.get_category_options()
+    if form.validate_on_submit():
+        bill = Bill(
+            date=form.date.data,
+            descr=form.description.data,
+            value=form.value.data,
+            category_id=form.category.data,
+            user_id=current_user.id,
+        )
+        db.session.add(bill)
+        db.session.commit()
+        flash(f"New bill ({form.description.data}) added successfully.", "success")
+        return redirect(url_for("tally.new_bill"))
+    return render_template("new_bill.html", title="New Bill", form=form)
+
+
+@bp.route("/delete_bill/<int:bill_id>", methods=["GET", "POST"])
+@login_required
+def delete_bill(bill_id: int) -> Response:
+    """Delete a bill."""
+    bill = Bill.query.get(bill_id)
+    description = bill.descr
+    db.session.delete(bill)
+    db.session.commit()
+    flash(f"Bill ({description}) deleted successfully.", "success")
+    return redirect(url_for("tally.review_all"))

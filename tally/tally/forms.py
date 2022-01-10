@@ -5,6 +5,7 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms import (
     BooleanField,
     FieldList,
+    FloatField,
     Form,
     FormField,
     HiddenField,
@@ -13,6 +14,7 @@ from wtforms import (
     SubmitField,
     ValidationError,
 )
+from wtforms.fields.html5 import DateField
 from wtforms.validators import Length, data_required
 
 from .models import Category
@@ -57,4 +59,12 @@ class BillCategoryForm(Form):
 
 class MultipleBillCategoryForm(FlaskForm):
     categories = FieldList(FormField(BillCategoryForm))
+    submit = SubmitField("Save")
+
+
+class BillForm(FlaskForm):
+    date = DateField("Date", validators=[data_required()])
+    description = StringField("Description", validators=[data_required()])
+    value = FloatField("Value", validators=[data_required()])
+    category = SelectField("Select a category", choices=[], coerce=int)
     submit = SubmitField("Save")

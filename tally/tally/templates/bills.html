@@ -1,3 +1,4 @@
+{% from 'macros.html' import render_modal %}
 {% extends "base.html" %}
 {% block content %}
     <div class="card">
@@ -14,15 +15,27 @@
                             <th>Description</th>
                             <th>Value</th>
                             <th>Category</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for transaction in transactions %}
                         <tr>
-                            <td>{{ transaction.date }}</th>
-                            <td>{{ transaction.descr }}</th>
-                            <td>{{ "{:.2f}".format(transaction.value) }}</th>
-                            <td>{{ transaction.category.name }}</th>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.descr }}</td>
+                            <td>{{ "{:.2f}".format(transaction.value) }}</td>
+                            <td>{{ transaction.category.name }}</td>
+                            <td>
+                                <a href="{{ url_for('tally.edit_bill', bill_id=transaction.id) }}" class="btn btn-warning">Edit</a>
+                                {{ render_modal(
+                                    "Delete",
+                                    "danger",
+                                    "Confirm Action",
+                                    "Are you sure you want to delete bill '" + transaction.descr + "'?",
+                                    url_for('tally.delete_bill', bill_id=transaction.id ),
+                                    transaction.id
+                                ) }}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

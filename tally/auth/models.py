@@ -25,3 +25,11 @@ class User(db.Model, UserMixin):
 
     def __repr__(self) -> str:
         return f'<User(username="{self.username}")>'
+
+    def get_category_options(self) -> list[tuple[int, str]]:
+        """Get user's category options for bills."""
+        # pylint: disable=not-an-iterable
+        # -1 used for un-categorized items since None is not compatible with SelectField
+        choices = [(category.id, category.name) for category in self.categories]
+        choices.insert(0, (-1, ""))
+        return choices

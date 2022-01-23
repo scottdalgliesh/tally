@@ -8,6 +8,7 @@ from ..extensions import db
 from .forms import BillForm, CategoryForm, MultipleBillCategoryForm, StatementForm
 from .models import Bill, Category
 from .parse import parse_statement
+from .review import UserBillData
 
 bp = Blueprint(
     "tally",
@@ -142,6 +143,7 @@ def review_all() -> str | Response:
         db.session.query(Bill)
         .filter(Bill.user_id == current_user.id, Bill.category_id != None)
         .order_by(desc(Bill.date))
+        .all()
     )
     return render_template(
         "bills.html",
@@ -179,11 +181,12 @@ def new_bill() -> str | Response:
     form = BillForm()
     form.category.choices = current_user.get_category_options()
     if form.validate_on_submit():
+        category_id = None if form.category.data == -1 else form.category.data
         bill = Bill(
             date=form.date.data,
             descr=form.description.data,
             value=form.value.data,
-            category_id=form.category.data,
+            category_id=category_id,
             user_id=current_user.id,
         )
         db.session.add(bill)
@@ -203,3 +206,39 @@ def delete_bill(bill_id: int) -> Response:
     db.session.commit()
     flash(f"Bill ({description}) deleted successfully.", "success")
     return redirect(url_for("tally.review_all"))
+
+
+@bp.route("/review_summary")
+@login_required
+def review_summary() -> str | Response:
+    """Review a per-category monthly summary."""
+    user_data = UserBillData(user=current_user)
+    try:
+        user_data.filter_first_and_last_month()
+    except ValueError:
+        if not user_data.data.empty:
+            flash(
+                """
+            Note: the results below include data from the first and last months on record, which
+            may be incomplete. Once enough data exists, these months will be excluded by default
+            to ensure overall averages are as accurate as possible.
+            """,
+                "warning",
+            )
+    summary = user_data.summarize()
+    styles = {
+        "selector": ".col_heading, td",
+        "props": f"text-align: right; width: {1/(len(summary.columns)+1)*100}%;",
+    }
+    summary_html = (
+        summary.style.format(formatter="{:,.2f}")
+        .set_table_attributes('class="table table-striped table-hover"')
+        .set_table_styles([styles])
+        .to_html()
+    )
+    return render_template(
+        "review_summary.html",
+        title="Summary",
+        empty=user_data.data.empty,
+        summary_html=summary_html,
+    )

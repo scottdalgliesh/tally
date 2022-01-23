@@ -150,3 +150,19 @@ def test_delete_bill(client):
     client.post("delete_bill/1")
     assert Bill.query.count() == count - 1
     assert Bill.query.get(1) is None
+
+
+def test_review_summary(client):
+    response = client.get("/review_summary")
+    html = BeautifulSoup(response.data, features="html.parser")
+    table_body = html.find("tbody")
+    rows = table_body.find_all("tr")  # type: ignore
+    sample_rows = [
+        ("2020", "January", "500.00", "500.00", "1,000.00"),
+        ("Average", "", "500.00", "500.00", "1,000.00"),
+    ]
+
+    assert len(rows) == 2
+    for sample_row, row in zip(sample_rows, rows):
+        for sample_cell, cell in zip(sample_row, row.find_all(["th", "td"])):
+            assert sample_cell == cell.getText()

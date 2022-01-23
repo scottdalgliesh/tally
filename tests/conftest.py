@@ -118,6 +118,22 @@ def logged_in(client, session):
 
 
 @pytest.fixture
+def review_db(session):
+    """Add additional data for the purpose of testing review module capabilities."""
+    session.add_all(
+        [
+            Bill.from_name(date(2019, 12, 31), "Previous month", 1, "scott", "misc"),
+            Bill.from_name(date(2020, 1, 1), "Start of current month", 1, "scott", "misc"),
+            Bill.from_name(date(2020, 1, 31), "End of current month", 1, "scott", "misc"),
+            Bill.from_name(date(2020, 2, 1), "Next month", 1, "scott", "misc"),
+        ]
+    )
+    session.add(Category.from_name(name="sample_hidden", username="scott", hidden=True))
+    session.add(Bill.from_name(date(2000, 1, 1), "hidden", 100, "scott", "sample_hidden"))
+    session.commit()
+
+
+@pytest.fixture
 def mock_tika(request, monkeypatch):
     class MockTika:
         """Mock Tika.parser response with provided text.

@@ -57,7 +57,7 @@ warn_unreachable = true
 
 [tool.pytest]
   [tool.pytest.ini_options]
-  addopts = "-n 4 --durations=5"
+  addopts = "-n 2 --durations=5"
   testpaths = ["tests"]
 
 [tool.poetry]

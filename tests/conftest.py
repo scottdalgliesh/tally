@@ -21,6 +21,7 @@ class TestConfig(Config):
     UPLOAD_FOLDER = Path("")  # to be overridden with temp directory
     TESTING = True
     WTF_CSRF_ENABLED = False
+    BCRYPT_LOG_ROUNDS = 4  # to speed up testing
 
 
 @pytest.fixture(scope="session")

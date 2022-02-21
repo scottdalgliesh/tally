@@ -2,22 +2,25 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
+from sqlalchemy.sql import elements
 from wtforms import (
     BooleanField,
+    DecimalField,
     FieldList,
     FloatField,
     Form,
     FormField,
     HiddenField,
     SelectField,
+    SelectMultipleField,
     StringField,
     SubmitField,
     ValidationError,
 )
 from wtforms.fields.html5 import DateField
-from wtforms.validators import Length, data_required
+from wtforms.validators import Length, data_required, optional
 
-from .models import Category
+from .models import Bill, Category
 
 
 class CategoryForm(FlaskForm):
@@ -68,3 +71,27 @@ class BillForm(FlaskForm):
     value = FloatField("Value", validators=[data_required()])
     category = SelectField("Select a category", choices=[], coerce=int)
     submit = SubmitField("Save")
+
+
+class BillFilterForm(FlaskForm):
+    start_date = DateField("Start Date", validators=[optional()])
+    end_date = DateField("End Date", validators=[optional()])
+    keywords = StringField("Enter search keyword(s)")  # TODO: allow regex
+    categories = SelectMultipleField("Select one or more category", choices=[], coerce=int)
+    min_value = DecimalField("Minimum value", validators=[optional()])
+    max_value = DecimalField("Maximum value", validators=[optional()])
+    exclude_hidden = BooleanField("Exclude hidden items", default="checked")
+    submit = SubmitField("Apply Filters")
+
+    def generate_filters(self, user_id: int) -> list[elements.BinaryExpression]:
+        """Convenience method to build search query from form data."""
+        return Bill.generate_filters(
+            user_id=user_id,
+            start_date=self.start_date.data,
+            end_date=self.end_date.data,
+            description=self.keywords.data,
+            categories=self.categories.data,
+            exclude_hidden=self.exclude_hidden.data,
+            min_value=self.min_value.data,
+            max_value=self.max_value.data,
+        )

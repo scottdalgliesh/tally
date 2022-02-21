@@ -1,10 +1,11 @@
 from copy import deepcopy
 from datetime import date
+from typing import Optional
 
 import pandas as pd
 from sqlalchemy import select
+from sqlalchemy.sql.elements import BinaryExpression
 
-from ..auth.models import User
 from ..extensions import db
 from .models import Bill, Category
 
@@ -22,24 +23,23 @@ class UserBillData:
     -------
     filter_first_and_last_month()
         Filter out data from the first and last month on record, which may be incomplete.
-    filter_by_category(category: str)
-        Filter out all data which does not match the specified category.
     summarize()
         Returns a pivot table summary of transaction data, indexed by month and category.
 
     """
 
-    def __init__(self, user: User, show_hidden: bool = False) -> None:
+    def __init__(self, sql_filters: Optional[list[BinaryExpression]] = None) -> None:
         """Retrieve all data for the specified user as a dataframe, indexed by date."""
+        if sql_filters is None:
+            sql_filters = []
+
         # build a query for the user's data
         query = (
             select(Bill.date, Bill.descr, Bill.value, Category.name)
             .join(Bill.category)
-            .where(Bill.user_id == user.id)
+            .where(*sql_filters)
             .order_by(Bill.date)
         )
-        if show_hidden is False:
-            query = query.where(Category.hidden == False)  # pylint: disable=singleton-comparison
 
         # read query results into a dataframe
         user_data = pd.read_sql_query(
@@ -70,11 +70,7 @@ class UserBillData:
         end_date_filter = self.data.index <= end_date
         self.data = self.data[start_date_filter & end_date_filter]
 
-    def filter_by_category(self, category: str) -> None:
-        """Filter out all data which does not match the specified category."""
-        category_filter = self.data["Category"] == category
-        self.data = self.data[category_filter]
-
+    # TODO: make empty months appear as zero instead of being excluded
     def summarize(self) -> pd.DataFrame:
         """Return a pivot table summary, indexed by month and category."""
         # create pivot table and sort by month (level=1) then year (level=0)

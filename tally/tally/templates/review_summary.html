@@ -1,5 +1,22 @@
+{% from 'macros.html' import render_form %}
 {% extends "base.html" %}
 {% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">Filter Transactions</h1>
+            <p>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">    
+                Filters
+                </button>
+                <a href="{{ url_for('tally.review_summary') }}" class="btn btn-secondary">Clear Filters</a>
+            </p>
+            <div class="collapse" id="collapseFilters">
+                <div >
+                    {{ render_form(form, 'Filters')}}
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card">
         <div class="card-body">
             <h1 class="card-title">Per-Category Spending Summary</h1>

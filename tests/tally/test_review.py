@@ -5,25 +5,28 @@ import pandas as pd
 import pytest
 from flask_login import current_user
 
+from tally.tally.models import Bill
 from tally.tally.review import UserBillData
 
-# pytestmark = pytest.mark.usefixtures("session", "logged_in")
 pytestmark = pytest.mark.usefixtures("session", "logged_in", "review_db")
 
 
 def test_UserBillData_basic():
-    data = UserBillData(user=current_user).data
+    filters = Bill.generate_filters(user_id=current_user.id)
+    data = UserBillData(filters).data
     assert len(data) == 8
     assert data.columns.to_list() == ["Description", "Value", "Category"]
     assert data.iloc[0].to_list() == ["Previous month", 1, "misc"]
 
-    all_data = UserBillData(user=current_user, show_hidden=True).data
+    filters = Bill.generate_filters(user_id=current_user.id, exclude_hidden=False)
+    all_data = UserBillData(filters).data
     assert len(all_data) == 9
     assert all_data.iloc[0].to_list() == ["hidden", 100, "sample_hidden"]
 
 
 def test_filter_first_and_last_month():
-    trans_data = UserBillData(user=current_user)
+    filters = Bill.generate_filters(user_id=current_user.id)
+    trans_data = UserBillData(filters)
     trans_data.filter_first_and_last_month()
     data = trans_data.data
     assert len(data) == 6
@@ -31,16 +34,10 @@ def test_filter_first_and_last_month():
     assert data.iloc[-1].to_list() == ["End of current month", 1.0, "misc"]
 
 
-def test_filter_by_category():
-    trans_data = UserBillData(user=current_user)
-    trans_data.filter_by_category("groceries")
-    assert len(trans_data.data) == 2
-    assert trans_data.data["Category"].unique() == "groceries"
-
-
 def test_summarize_all():
     # get transactions from db
-    trans_data = UserBillData(current_user)
+    filters = Bill.generate_filters(user_id=current_user.id)
+    trans_data = UserBillData(filters)
     pivot = trans_data.summarize()
 
     # create expected result

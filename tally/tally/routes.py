@@ -1,11 +1,17 @@
 from flask import Blueprint, current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
-from sqlalchemy import desc
+from sqlalchemy import desc, select
 from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from ..extensions import db
-from .forms import BillForm, CategoryForm, MultipleBillCategoryForm, StatementForm
+from .forms import (
+    BillFilterForm,
+    BillForm,
+    CategoryForm,
+    MultipleBillCategoryForm,
+    StatementForm,
+)
 from .models import Bill, Category
 from .parse import parse_statement
 from .review import UserBillData
@@ -134,21 +140,22 @@ def categorize() -> str | Response:
     )
 
 
-@bp.route("/review_all", methods=["GET"])
+@bp.route("/review_all", methods=["GET", "POST"])
 @login_required
 def review_all() -> str | Response:
     """Review categorized transactions."""
     # pylint: disable=singleton-comparison
-    transactions = (
-        db.session.query(Bill)
-        .filter(Bill.user_id == current_user.id, Bill.category_id != None)
-        .order_by(desc(Bill.date))
-        .all()
-    )
+    form = BillFilterForm()
+    form.categories.choices = current_user.get_category_options()
+    sql_filters = form.generate_filters(user_id=current_user.id)
+    query = select(Bill).join(Bill.category).where(*sql_filters).order_by(desc(Bill.date))
+    transactions = db.session.execute(query).scalars().all()
+    # TODO: add sum for filtered results
     return render_template(
         "bills.html",
         title="Review All",
         transactions=transactions,
+        form=form,
     )
 
 
@@ -208,11 +215,14 @@ def delete_bill(bill_id: int) -> Response:
     return redirect(url_for("tally.review_all"))
 
 
-@bp.route("/review_summary")
+@bp.route("/review_summary", methods=["GET", "POST"])
 @login_required
 def review_summary() -> str | Response:
     """Review a per-category monthly summary."""
-    user_data = UserBillData(user=current_user)
+    form = BillFilterForm()
+    form.categories.choices = current_user.get_category_options()
+    sql_filters = form.generate_filters(user_id=current_user.id)
+    user_data = UserBillData(sql_filters=sql_filters)
     try:
         user_data.filter_first_and_last_month()
     except ValueError:
@@ -241,4 +251,5 @@ def review_summary() -> str | Response:
         title="Summary",
         empty=user_data.data.empty,
         summary_html=summary_html,
+        form=form,
     )

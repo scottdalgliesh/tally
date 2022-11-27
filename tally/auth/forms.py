@@ -26,7 +26,6 @@ class UserRegisterForm(BaseUserForm):
 
     def validate_username(self, username: StringField) -> None:
         """Verify username is unique."""
-        # pylint: disable=[no-self-use]
         if User.query.filter_by(username=username.data).first():
             raise ValidationError("Username is taken.")
 
@@ -42,7 +41,6 @@ class UserUpdateForm(BaseUserForm):
 
     def validate_username(self, username: StringField) -> None:
         """Verify new username is not same as old username or not unique."""
-        # pylint: disable=[no-self-use]
         if username.data == current_user.username:
             return
         if User.query.filter_by(username=username.data).first():

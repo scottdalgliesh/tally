@@ -51,8 +51,6 @@ warn_unreachable = true
     "missing-module-docstring",
     "invalid-name",
     "design",
-    "C0330",
-    "C0326",
   ]
 
 [tool.pytest]
@@ -70,8 +68,8 @@ license = "MIT"
   [tool.poetry.dependencies]
   python = "^3.10"
   Flask = "^2.0"
-  Flask-Bcrypt = "^0.7.1"
-  Flask-Login = "^0.5.0"
+  Flask-Bcrypt = "^1.0.1"
+  Flask-Login = "^0.6.2"
   Flask-Migrate = "^3.1.0"
   Flask-SQLAlchemy = "^2.5.1"
   Flask-WTF = "^1.0"
@@ -88,11 +86,12 @@ license = "MIT"
   pytest-xdist = "^2.5.0"
   pytest-flask = "^1.2.0"
   pytest-cov = "^3.0.0"
-  black = "^21.12b0"
+  black = "^22.10.0"
   SQLAlchemy = { extras = ["mypy"], version = "^1.4.29" }
-  mypy = "^0.930"
+  mypy = "^0.991"
   beautifulsoup4 = "^4.10.0"
   types-beautifulsoup4 = "^4.10.10"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
